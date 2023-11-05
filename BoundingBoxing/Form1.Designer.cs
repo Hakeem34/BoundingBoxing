@@ -44,6 +44,8 @@
             this.pnl_window.Name = "pnl_window";
             this.pnl_window.Size = new System.Drawing.Size(944, 473);
             this.pnl_window.TabIndex = 0;
+            this.pnl_window.Paint += new System.Windows.Forms.PaintEventHandler(this.pnl_window_Paint);
+            this.pnl_window.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pnl_window_MouseDoubleClick);
             this.pnl_window.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnl_window_MouseDown);
             this.pnl_window.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnl_window_MouseMove);
             this.pnl_window.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnl_window_MouseUp);

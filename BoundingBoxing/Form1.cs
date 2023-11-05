@@ -91,45 +91,37 @@ namespace BoundingBoxing
 
                 if (IsTopEdge(e.Location) && IsLeftEdge(e.Location))
                 {
-                    this.lbl_title.Text = "TopLeft";
                     this.drag_mode = Constants.DRAG_MODE_TOP | Constants.DRAG_MODE_LEFT;
                 }
                 else if (IsTopEdge(e.Location) && IsRightEdge(e.Location))
                 {
-                    this.lbl_title.Text = "TopRight";
                     this.drag_mode = Constants.DRAG_MODE_TOP | Constants.DRAG_MODE_RIGHT;
                 }
                 else if (IsTopEdge(e.Location))
                 {
-                    this.lbl_title.Text = "Top";
                     this.drag_mode = Constants.DRAG_MODE_TOP;
                 }
                 else if (IsBottomEdge(e.Location) && IsLeftEdge(e.Location))
                 {
-                    this.lbl_title.Text = "BottomLeft";
                     this.drag_mode = Constants.DRAG_MODE_BOTTOM | Constants.DRAG_MODE_LEFT;
                 }
                 else if (IsBottomEdge(e.Location) && IsRightEdge(e.Location))
                 {
-                    this.lbl_title.Text = "BottomRight";
                     this.drag_mode = Constants.DRAG_MODE_BOTTOM | Constants.DRAG_MODE_RIGHT;
                     this.Cursor = Cursors.SizeNWSE;
                 }
                 else if (IsBottomEdge(e.Location))
                 {
-                    this.lbl_title.Text = "Bottom";
                     this.drag_mode = Constants.DRAG_MODE_BOTTOM;
                     this.Cursor = Cursors.SizeNS;
                 }
                 else if (IsRightEdge(e.Location))
                 {
-                    this.lbl_title.Text = "Right";
                     this.drag_mode = Constants.DRAG_MODE_RIGHT;
                     this.Cursor = Cursors.SizeWE;
                 }
                 else if (IsLeftEdge(e.Location))
                 {
-                    this.lbl_title.Text = "Left";
                     this.drag_mode = Constants.DRAG_MODE_LEFT;
                 }
             }
@@ -224,6 +216,23 @@ namespace BoundingBoxing
             /* 座標が0,0なので、変換無しにイベントをスルーする */
             pnl_window_MouseMove(sender, e);
 
+        }
+
+        private void pnl_window_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void pnl_window_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Maximized)
+            {
+                this.WindowState = FormWindowState.Normal;
+            }
+            else
+            {
+                this.WindowState = FormWindowState.Maximized;
+            }
         }
     }
 
