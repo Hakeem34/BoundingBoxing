@@ -30,7 +30,6 @@
         {
             this.pnl_window = new System.Windows.Forms.Panel();
             this.lbl_title = new System.Windows.Forms.Label();
-            this.pnl_trans = new System.Windows.Forms.Panel();
             this.pnl_window.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -38,11 +37,11 @@
             // 
             this.pnl_window.BackColor = System.Drawing.SystemColors.ButtonShadow;
             this.pnl_window.Controls.Add(this.lbl_title);
-            this.pnl_window.Controls.Add(this.pnl_trans);
             this.pnl_window.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnl_window.Location = new System.Drawing.Point(0, 0);
+            this.pnl_window.Margin = new System.Windows.Forms.Padding(2);
             this.pnl_window.Name = "pnl_window";
-            this.pnl_window.Size = new System.Drawing.Size(944, 473);
+            this.pnl_window.Size = new System.Drawing.Size(708, 378);
             this.pnl_window.TabIndex = 0;
             this.pnl_window.Paint += new System.Windows.Forms.PaintEventHandler(this.pnl_window_Paint);
             this.pnl_window.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pnl_window_MouseDoubleClick);
@@ -54,28 +53,22 @@
             // 
             this.lbl_title.AutoSize = true;
             this.lbl_title.Location = new System.Drawing.Point(0, 0);
+            this.lbl_title.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lbl_title.Name = "lbl_title";
-            this.lbl_title.Size = new System.Drawing.Size(109, 15);
+            this.lbl_title.Size = new System.Drawing.Size(87, 12);
             this.lbl_title.TabIndex = 1;
             this.lbl_title.Text = "BoundingBoxing";
             this.lbl_title.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lbl_title_MouseDown);
             this.lbl_title.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lbl_title_MouseMove);
             this.lbl_title.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lbl_title_MouseUp);
             // 
-            // pnl_trans
-            // 
-            this.pnl_trans.BackColor = System.Drawing.SystemColors.Control;
-            this.pnl_trans.Location = new System.Drawing.Point(312, 165);
-            this.pnl_trans.Name = "pnl_trans";
-            this.pnl_trans.Size = new System.Drawing.Size(200, 100);
-            this.pnl_trans.TabIndex = 0;
-            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(944, 473);
+            this.ClientSize = new System.Drawing.Size(708, 378);
             this.Controls.Add(this.pnl_window);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "BoundingBoxing";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -89,7 +82,6 @@
         #endregion
 
         private System.Windows.Forms.Panel pnl_window;
-        private System.Windows.Forms.Panel pnl_trans;
         private System.Windows.Forms.Label lbl_title;
     }
 }

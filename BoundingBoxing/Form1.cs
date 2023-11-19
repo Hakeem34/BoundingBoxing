@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
+using System.Runtime.InteropServices; //DllImport属性を使用するために必要
 
 namespace BoundingBoxing
 {
@@ -15,32 +17,83 @@ namespace BoundingBoxing
         private int mouse_on = 0;
         private int drag_mode = 0;
         private Point pre_location;
-        
+        private Thread console_thread;
+        private Boxs boxs;
+        private Color BoundingBoxColor = Color.Red;
+
+
+        [DllImport("kernel32.dll")]
+        public static extern bool AttachConsole(uint dwProcessId);
+
+        [DllImport("Kernel32.dll")]
+        public static extern bool AllocConsole();
+
+        [DllImport("kernel32.dll")]
+        public static extern bool FreeConsole();
+
+        private void ConsoleThreadEntry()
+        {
+
+            bool attach = AttachConsole(0xFFFFFFFF);
+            if (attach == false)
+            {
+                bool ret = AllocConsole();
+            }
+/*
+            // stdoutのストリームを取得
+            System.IO.Stream stream = System.Console.OpenStandardOutput();
+            System.IO.StreamWriter stdout = new System.IO.StreamWriter(stream);
+
+            if (attach == false)
+            {
+                stdout.WriteLine("MessgageB!");
+            }
+            else
+            {
+                stdout.WriteLine("MessgageA!");
+            }
+            stdout.Flush();
+*/
+            while (true)
+            {
+                var line = System.Console.ReadLine();
+                System.Console.WriteLine(line);
+            }
+        }
+
 
         public Form1()
         {
             InitializeComponent();
+            boxs = new BoundingBoxing.Boxs();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             // 透過色に背景色を設定
             this.TransparencyKey = this.BackColor;
+
             this.FormBorderStyle = FormBorderStyle.None;
-//          this.ControlBox = false;
-//          this.Text = "";
             panel2_resize();
+
+            this.console_thread = new Thread(new ThreadStart(this.ConsoleThreadEntry));
+            this.console_thread.IsBackground = true;
+            this.console_thread.Start();
+//          this.pnl_trans.BackColor = Color.Transparent;
         }
 
         private void panel2_resize()
         {
-            this.pnl_trans.Top    = Constants.EDGE_SIZE + Constants.LABEL_SIZE;
-            this.pnl_trans.Left   = Constants.EDGE_SIZE;
-            this.pnl_trans.Width  = this.Width - (Constants.EDGE_SIZE * 2);
-            this.pnl_trans.Height = this.Height - (Constants.LABEL_SIZE + Constants.EDGE_SIZE * 2);
-
-            String text = String.Format("BoundingBoxing({0} x {1})", this.pnl_trans.Width, this.pnl_trans.Height);
+            String text = String.Format("BoundingBoxing({0} x {1})", this.pnl_window.Width, this.pnl_window.Height);
             this.lbl_title.Text = text;
+            boxs.SetPhysicalSize(new Size(this.pnl_window.Width, this.pnl_window.Height));
+            pnl_window.Invalidate();
+        }
+
+
+        private void add_bounding_box(Point location, Size size, String class_name, int probability, Color color, int tag)
+        {
+            this.boxs.AddBox(location.X, location.Y, size.Width, size.Height, class_name, probability, color, tag);
         }
 
 
@@ -220,7 +273,15 @@ namespace BoundingBoxing
 
         private void pnl_window_Paint(object sender, PaintEventArgs e)
         {
+            SolidBrush b_back = new SolidBrush(Color.DarkGray);
+            SolidBrush b_trans = new SolidBrush(this.BackColor);
+            Rectangle window_rect = new Rectangle(0, 0, this.Width, this.Height);
+            e.Graphics.FillRectangle(b_back, window_rect);
 
+            Rectangle trans_rect = new Rectangle(Constants.EDGE_SIZE, Constants.EDGE_SIZE + Constants.LABEL_SIZE, this.Width - Constants.EDGE_SIZE * 2, this.Height - Constants.LABEL_SIZE - Constants.EDGE_SIZE * 2);
+            e.Graphics.FillRectangle(b_trans, trans_rect);
+
+            boxs.DrawAllBoxs(e.Graphics);
         }
 
         private void pnl_window_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -228,6 +289,11 @@ namespace BoundingBoxing
             if (this.WindowState == FormWindowState.Maximized)
             {
                 this.WindowState = FormWindowState.Normal;
+                add_bounding_box(new Point(0, 100), new Size(100, 100), "Test", 100, this.BoundingBoxColor, 1);
+                add_bounding_box(new Point(this.Width - 100, 100), new Size(100, 100), "Test2", 100, Color.Blue, 2);
+//              add_bounding_box(new Point(150, 150), new Size(2, 2), "Test3", 100);
+//              add_bounding_box(new Point(200, 200), new Size(1, 1), "Test4", 100);
+//              add_bounding_box(new Point(250, 250), new Size(0, 0), "Test4", 100);
             }
             else
             {
