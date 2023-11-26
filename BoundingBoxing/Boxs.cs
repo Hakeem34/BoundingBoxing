@@ -23,6 +23,11 @@ namespace BoundingBoxing
             physical_window = new Size(1920, 1080);
         }
 
+        public void ClearAll()
+        {
+            box_list.Clear();
+        }
+
         public void SetLogicalSize(Size size)
         {
             logical_window = size;
@@ -114,7 +119,7 @@ namespace BoundingBoxing
 
             SolidBrush brush = new SolidBrush(box.color);
             Font f = new Font("Yu Gothic UI", 12);
-            graph.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+            graph.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;      /* 透過した下地によってはハイライトだけが目立って読めなくなるので */
             graph.DrawString(box.class_name, f, brush, phys_x, phys_y);
             graph.DrawRectangle(new Pen(box.color, 1), phys_rect);
         }

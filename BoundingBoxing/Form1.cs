@@ -8,12 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using System.Text.RegularExpressions;
 using System.Runtime.InteropServices; //DllImport属性を使用するために必要
 
 namespace BoundingBoxing
 {
     public partial class Form1 : Form
     {
+        delegate void CmdDelegate();
+
         private int mouse_on = 0;
         private int drag_mode = 0;
         private Point pre_location;
@@ -30,6 +33,11 @@ namespace BoundingBoxing
 
         [DllImport("kernel32.dll")]
         public static extern bool FreeConsole();
+
+        void BB_Update()
+        {
+            pnl_window.Invalidate();
+        }
 
         private void ConsoleThreadEntry()
         {
@@ -56,8 +64,79 @@ namespace BoundingBoxing
 */
             while (true)
             {
+                Match result;
+                int X,Y,W,H;
+                Color col;
+                String class_name;
+                int prob;
+                int tag;
+                String disp = "";
+
                 var line = System.Console.ReadLine();
-                System.Console.WriteLine(line);
+                var regex_BB1 = new Regex(@"^[bB][bB]\s+([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([^,]+),\s*0x([0-9a-fA-F]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*$");
+                var regex_BB2 = new Regex(@"^[bB][bB]\s+([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([^,]+),\s*0x([0-9a-fA-F]+)\s*,\s*([0-9]+)\s*$");
+                var regex_BB3 = new Regex(@"^[bB][bB]\s+([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*$");
+                var regex_UP = new Regex(@"^UPDATE\s*$", RegexOptions.IgnoreCase);
+                var regex_CLR = new Regex(@"^CLEAR\s*$", RegexOptions.IgnoreCase);
+
+                if ((result = regex_BB1.Match(line)).Success)
+                {
+                    X = Int32.Parse(result.Groups[1].ToString());
+                    Y = Int32.Parse(result.Groups[2].ToString());
+                    W = Int32.Parse(result.Groups[3].ToString());
+                    H = Int32.Parse(result.Groups[4].ToString());
+                    class_name = result.Groups[5].ToString();
+                    col = Color.FromArgb(Int32.Parse(result.Groups[6].ToString(), System.Globalization.NumberStyles.HexNumber));
+                    prob = Int32.Parse(result.Groups[7].ToString());
+                    tag = Int32.Parse(result.Groups[8].ToString());
+                    disp = String.Format("BoundingBox X={0}, Y={1}, W={2}, H={3}, Class:{4}, {5}, {6}%, TAG:{7}", X, Y, W, H, class_name, col, prob, tag);
+                }
+                else if ((result = regex_BB2.Match(line)).Success)
+                {
+                    X = Int32.Parse(result.Groups[1].ToString());
+                    Y = Int32.Parse(result.Groups[2].ToString());
+                    W = Int32.Parse(result.Groups[3].ToString());
+                    H = Int32.Parse(result.Groups[4].ToString());
+                    class_name = result.Groups[5].ToString();
+                    col = Color.FromArgb(Int32.Parse(result.Groups[6].ToString(), System.Globalization.NumberStyles.HexNumber));
+                    prob = Int32.Parse(result.Groups[7].ToString());
+                    tag = -1;
+
+                    disp = String.Format("BoundingBox X={0}, Y={1}, W={2}, H={3}, Class:{4}, {5}, {6}%", X, Y, W, H, class_name, col, prob);
+                }
+                else if ((result = regex_BB3.Match(line)).Success)
+                {
+                    X = Int32.Parse(result.Groups[1].ToString());
+                    Y = Int32.Parse(result.Groups[2].ToString());
+                    W = Int32.Parse(result.Groups[3].ToString());
+                    H = Int32.Parse(result.Groups[4].ToString());
+                    class_name = "";
+                    col = Color.Red;
+                    prob = 100;
+                    tag = -1;
+
+                    disp = String.Format("BoundingBox X={0}, Y={1}, W={2}, H={3}", X, Y, W, H);
+                }
+                else if ((result = regex_UP.Match(line)).Success)
+                {
+                    System.Console.WriteLine("UPDATE!");
+                    Invoke(new CmdDelegate(BB_Update));
+                    continue;
+                }
+                else if ((result = regex_CLR.Match(line)).Success)
+                {
+                    System.Console.WriteLine("CLEAR!");
+                    boxs.ClearAll();
+                    continue;
+                }
+                else
+                {
+                    System.Console.WriteLine("Invalid Sentence");
+                    continue;
+                }
+
+                System.Console.WriteLine(disp);
+                boxs.AddBox(X, Y, W, H, class_name, prob, col, tag);
             }
         }
 
